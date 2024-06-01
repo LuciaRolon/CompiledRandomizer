@@ -1,0 +1,60 @@
+{
+  "name": "SotN-Randomizer",
+  "version": "3.17.0",
+  "description": "This is a romhacking tool to randomize some things about `Castlevania: Symphony of the Night`.",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "hygen": "^6.2.11",
+    "seedrandom": "^3.0.1",
+    "yargs": "^17.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eldri7ch2/SotN-Randomizer.git"
+  },
+  "scripts": {
+    "build-presets": "node tools/build-presets",
+    "postinstall": "npm run build-presets"
+  },
+  "presets": [
+    "casual",
+    "aperture",
+    "breach",
+    "summoner",
+    "forge",
+    "big-toss",
+    "grand-tour",
+    "crash-course",
+    "safe",
+    "adventure",
+    "og",
+    "guarded-og",
+    "speedrun",
+    "lycanthrope",
+    "warlock",
+    "nimble",
+    "expedition",
+    "bat-master",
+    "glitch",
+    "scavenger",
+    "empty-hand",
+    "gem-farmer",
+    "third-castle",
+    "rat-race",
+    "boss-rush",
+    "bountyhunter",
+    "chaos-lite",
+    "leg-day",
+    "beyond",
+    "magic-mirror"
+  ],
+  "engines": {
+    "node": ">=15"
+  },
+  "author": "Wild Mouse <3snowp7im@gmail.com>, eldri7ch, MottZilla, MainMemory, MT_Fun, Bismurphy, TalicZealot, Soba, elraro",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/eldri7ch2/SotN-Randomizer/issues"
+  },
+  "homepage": "https://sotn.io"
+}

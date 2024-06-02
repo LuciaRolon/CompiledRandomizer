@@ -158,8 +158,6 @@
       elems.stats.disabled = true
       elems.music.disabled = true
       elems.turkeyMode.disabled = true
-      elems.antiFreezeMode.disabled = true
-      elems.magicmaxMode.disabled = true
       presetIdChange()
       elems.options.classList.add('hide')
     } else {
@@ -174,8 +172,6 @@
       elems.stats.disabled = false
       elems.music.disabled = false
       elems.turkeyMode.disabled = false
-      elems.magicmaxMode.disabled = false
-      elems.antiFreezeMode.disabled = false
       elems.options.classList.remove('hidden')
       elems.options.classList.remove('hide')
     }
@@ -226,8 +222,6 @@
       elems.stats.checked = !!options.stats
       elems.music.checked = !!options.music
       elems.turkeyMode.checked = !!options.turkeyMode
-      elems.magicmaxMode.checked = !!options.magicmaxMode
-      elems.antiFreezeMode.checked = !!options.antiFreezeMode
     }
   }
 
@@ -358,10 +352,6 @@
 
   function magicmaxModeChange() {
     localStorage.setItem('magicmaxMode', elems.magicmaxMode.checked)
-  }
-
-  function antiFreezeModeChange() {
-    localStorage.setItem('antiFreezeMode', elems.antiFreezeMode.checked)
   }
 
   function accessibilityPatchesChange() {
@@ -503,9 +493,6 @@
       if (elems.magicmaxMode.checked) {
         options.magicmaxMode = true
       }
-      if (elems.antiFreezeMode.checked) {
-        options.antiFreezeMode = true
-      }
       return options
     }
     const options = {
@@ -519,7 +506,6 @@
       turkeyMode: elems.turkeyMode.checked,
       tournamentMode: elems.tournamentMode.checked,
       magicmaxMode: elems.magicmaxMode.checked,
-      antiFreezeMode: elems.antiFreezeMode.checked,
     }
     if (elems.enemyDropsArg.value) {
       options.enemyDrops = util.optionsFromString(
@@ -667,10 +653,6 @@
         if (options.magicmaxMode) {
           check.apply(util.applyMagicMaxPatches())
         }
-        // Apply anti-freeze patches.
-        if (options.antiFreezeMode) {
-          check.apply(util.applyAntiFreezePatches())
-        }
         // Apply writes.
         check.apply(util.applyWrites(rng, applied))
         util.setSeedText(
@@ -765,8 +747,6 @@
     elems.writes.value = ''
     elems.turkeyMode.disabled = false
     elems.tournamentMode.disabled = false
-    elems.magicmaxMode.disabled = false
-    elems.antiFreezeMode.disabled = false
     elems.clear.classList.add('hidden')
     presetChange()
   }
@@ -895,7 +875,6 @@
     appendSeed: document.getElementById('append-seed'),
     tournamentMode: document.getElementById('tournament-mode'),
     magicmaxMode: document.getElementById('magicmax-mode'),
-    antiFreezeMode: document.getElementById('antifreeze-mode'),
     accessibilityPatches: document.getElementById('accessibility-patches'),
     showSpoilers: document.getElementById('show-spoilers'),
     showRelics: document.getElementById('show-relics'),
@@ -948,7 +927,6 @@
   elems.appendSeed.addEventListener('change', appendSeedChange)
   elems.tournamentMode.addEventListener('change', tournamentModeChange)
   elems.magicmaxMode.addEventListener('change', magicmaxModeChange)
-  elems.antiFreezeMode.addEventListener('change', antiFreezeModeChange)
   elems.accessibilityPatches.addEventListener('change', accessibilityPatchesChange)
   elems.showSpoilers.addEventListener('change', spoilersChange)
   elems.showRelics.addEventListener('change', showRelicsChange)
@@ -1138,8 +1116,6 @@
     elems.stats.disabled = true
     elems.music.disabled = true
     elems.turkeyMode.disabled = true
-    elems.magicmaxMode.disabled = true
-    elems.antiFreezeMode.disabled = true
     elems.clear.classList.remove('hidden')
     const baseUrl = url.origin + url.pathname
     window.history.replaceState({}, document.title, baseUrl)
@@ -1226,7 +1202,6 @@
   loadOption('showRelics', showRelicsChange, false)
   loadOption('tournamentMode', tournamentModeChange, false)
   loadOption('magicmaxMode', magicmaxModeChange, false)
-  loadOption('antiFreezeMode', antiFreezeModeChange, false)
   loadOption('accessibilityPatches', accessibilityPatchesChange, true)
   loadOption('showSpoilers', spoilersChange, true)
   setTimeout(function() {

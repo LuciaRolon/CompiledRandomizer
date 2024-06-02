@@ -35,6 +35,8 @@
       require('./leg-day'),
       require('./beyond'),
       require('./magic-mirror'),
+      require('./lookingglass'),
+      require('./test'),
     ]
   }
   exports.sort(function(a, b) {

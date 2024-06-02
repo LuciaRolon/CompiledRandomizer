@@ -1381,7 +1381,7 @@
         return !tile.noOffset
       })[0]
       const replacement = (addon || []).concat(pool).filter(function(item) {
-        return item.tiles && item.tiles.some(function(tile) {
+        return item.tiles && item.tiles.some(function(tile) { // Added correction to fix failed Bone Scimitar lookups
           if (tile === undefined) {
             if (name === 'Short sword') {
               addresses = [ 0x0b6b3c ]
@@ -1502,40 +1502,6 @@
     }
     // Write the jump from injected code.
     data.writeWord(address, 0x0803924f)
-  }
-
-  function mpMax(data, rng) {
-    // Patch MP Vessels over Heart Vessels - eldri7ch
-    data.writeWord(0x00117b50, 0x3c028004)
-    data.writeWord(0x00117b54, 0x8c42c9a0)
-    data.writeWord(0x00117b58, 0x00000000)
-    data.writeWord(0x00117b5c, 0x10400003)
-    data.writeWord(0x00117b60, 0x00000000)
-    data.writeWord(0x00117b64, 0x0803f8e7)
-    data.writeWord(0x00117b68, 0x34020001)
-    data.writeWord(0x00117b6c, 0x3c058009)
-    data.writeWord(0x00117b70, 0x8ca47bac)
-    data.writeWord(0x00117b74, 0x8ca67ba8)
-    data.writeWord(0x00117b78, 0x24840005)
-    data.writeWord(0x00117b7c, 0xaca47bac)
-    data.writeWord(0x00117b80, 0x24c60005)
-    data.writeWord(0x00117b84, 0xaca67ba8)
-    data.writeWord(0x00117b88, 0x8ca47bb4)
-    data.writeWord(0x00117b8c, 0x00000000)
-    data.writeWord(0x00117b90, 0x24840003)
-    data.writeWord(0x00117b94, 0xaca47bb0)
-    data.writeWord(0x00117b98, 0xaca47bb4)
-    data.writeWord(0x00117b9c, 0x00000000)
-    data.writeWord(0x00117ba0, 0x3c058013)
-    data.writeWord(0x00117ba4, 0x34a57964)
-    data.writeWord(0x00117ba8, 0x00000000)
-    data.writeWord(0x00117bac, 0x8ca40000)
-    data.writeWord(0x00117bb0, 0x00000000)
-    data.writeWord(0x00117bb4, 0x24840001)
-    data.writeWord(0x00117bb8, 0xaca40000)
-    data.writeWord(0x00117bbc, 0x0803f8e7)
-    data.writeWord(0x00117bc0, 0x34020000)
-    return data
   }
 
   function randomizeCapeColors(data, rng) {
@@ -1736,10 +1702,6 @@
           randomizeCapeColors(data, rng)
           randomizeGravBootColors(data,rng)
           randomizeHydroStormColor(data, rng)
-        }
-        // MP Vessel. - eldri7ch
-        if (options.mpMax) {
-          mpMax(data, rng) // make sure new options with writes have proper params; this is called from within this file - eldri7ch
         }
         // Write items to ROM.
         if (options.itemLocations

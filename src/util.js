@@ -4788,12 +4788,11 @@
     workers,
     nonce,
     url,
-    inst,
   ) {
     const promises = Array(workers.length)
     const running = Array(workers.length).fill(true)
     let done
-    inst = 0
+    let instance = 0
     for (let i = 0; i < workers.length; i++) {
       const thread = i
       const worker = workers[i]
@@ -4814,9 +4813,9 @@
             newNames: newNames,
           })
         }
+        instance = instance + 1
         worker.postMessage(JSON.stringify(message))
       }
-      inst = inst + 1
       promises[i] = new Promise(function(resolve, reject) {
         addEventListener.call(worker, 'message', function(result) {
           if (self) {
@@ -4856,7 +4855,7 @@
       if (result.error) {
         throw result.error
       }
-      console.log('Relics randomized '+inst+' times')
+      console.log('Relics randomized ' + instance + ' times')
       return result
     })
   }
@@ -4948,7 +4947,7 @@
             value = Math.floor(rng() * 0x100000000)
           }
           else if (value === 'randomRelic') {
-            // "2690808163" translates to the address before the relic hex is added - eldri7ch
+            // "2690808164" translates to the address before the relic hex is added - eldri7ch
             let relicHex
             relicHex = Math.floor(rng() * 29) + 2690808164
             value = numToHex(relicHex)

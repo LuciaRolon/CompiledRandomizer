@@ -855,7 +855,7 @@ if (argv._[0]) {
 if (argv.race) {
   argv.url = ''
   if (argv.verbose === undefined) {
-//    argv.verbose = 2 - 3snow_p7im
+    argv.verbose = 2
   }
 }
 // Suppress output if quiet argument specified. - 3snow_p7im

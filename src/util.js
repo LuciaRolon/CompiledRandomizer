@@ -3028,6 +3028,10 @@
     this.music = true
     // Turkey mode. - 3snow_p7im
     this.turkey = true
+    // Magic Max addition. - eldri7ch
+    this.magicmax = false
+    // Screen freeze removal. - eldri7ch
+    this.antifreeze = false
     // Arbitrary writes. - 3snow_p7im
     this.writes = undefined
   }
@@ -4267,11 +4271,13 @@
 
   // Enable magic vessels. - eldri7ch
   PresetBuilder.prototype.magicmaxMode = function magicmaxMode(enabled) {
+    assert.equal(typeof(enabled), 'boolean')
     this.magicmax = enabled
   }
 
   // remove screen freezes. - eldri7ch
   PresetBuilder.prototype.antiFreezeMode = function antiFreezeMode(enabled) {
+    assert.equal(typeof(enabled), 'boolean')
     this.antifreeze = enabled
   }
 

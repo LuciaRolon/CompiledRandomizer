@@ -915,12 +915,13 @@ if (argv.tournament) {
   options.tournamentMode = true
 }
 // Enable magic max mode if specified. - MottZilla
-if (argv.magicmax) { // Adds MP Vessel to replace Heart Vessel - eldrich
+if ('magicmax' in argv) { // Adds MP Vessel to replace Heart Vessel - eldrich
   options.magicmaxMode = true
 }
 // Enable anti-freeze mode if specified. - eldri7ch
-if (argv.antifreeze) { // Removes screen freezes from level-up and acquisitions - eldrich
+if ('antifreeze' in argv) { // Removes screen freezes from level-up and acquisitions - eldrich
   options.antiFreezeMode = true
+  console.log('antifreeze found')
 }
 // Set misc options.
 if ('verbose' in argv) {
@@ -1054,11 +1055,11 @@ if ('inBin' in argv) {
           // Apply tournament mode patches.
           check.apply(util.applyTournamentModePatches())
         }
-        if (options.magicmaxMode) { // Adds MP Vessel to replace Heart Vessel - eldrich
+        if (options.magicmaxMode || applied.magicmaxMode) { // Adds MP Vessel to replace Heart Vessel - eldrich
           // Apply magic max mode patches. - MottZilla
           check.apply(util.applyMagicMaxPatches())
         }
-        if (options.antiFreezeMode) { // Adds MP Vessel to replace Heart Vessel - eldrich
+        if (options.antiFreezeMode || applied.antiFreezeMode) { // Adds MP Vessel to replace Heart Vessel - eldrich
           // Apply anti-freeze mode patches. - eldri7ch
           check.apply(util.applyAntiFreezePatches())
         }

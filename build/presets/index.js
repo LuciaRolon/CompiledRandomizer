@@ -36,6 +36,8 @@
       require('./beyond'),
       require('./magic-mirror'),
       require('./lookingglass'),
+      require('./glitch-two'),
+      require('./skinwalker'),
       require('./test'),
     ]
   }

@@ -641,7 +641,7 @@
     // I_AM_THE_WIND: 0x3c,       // I Am the Wind
     // SILENCE: 0x3d,             // Silence
     // LAND_OF_BENEDICTION: 0x3e, // Land of Benediction
-    NOCTURNE: 0x3f,               // Nocturne
+    NOCTURNE: 0x3f,            // Nocturne
     // MOONLIGHT_NOCTURNE: 0x40,  // Moonlight Nocturne
     // SPOKEN: 0x41,
     // SPOKEN: 0x42,

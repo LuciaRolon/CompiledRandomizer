@@ -1,4 +1,4 @@
-#!/usr/bin/env node - 3snow_p7im
+#!/usr/bin/env node
 'use strict'
 const crypto = require('crypto')
 const fs = require('fs')
@@ -451,6 +451,7 @@ function presetMetaHelp(preset) {
     switch (options.relicLocations.extension) {
     case constants.EXTENSION.WANDERER:
       extensions.push(constants.EXTENSION.WANDERER)
+      break
     case constants.EXTENSION.TOURIST:
       extensions.push(constants.EXTENSION.TOURIST)  
     case constants.EXTENSION.EQUIPMENT:
@@ -594,14 +595,19 @@ const yargs = require('yargs')
     describe: 'Enable tournament mode (`--help tournament`)',
     type: 'boolean',
   })
-  .option('magicmax', { // Adds MP Vessel to replace Heart Vessel - eldri7ch
-    alias: 'x',
-    describe: 'Enable Magic Max Vessels',
+  .option('colorrando', {
+    alias: 'l',
+    describe: 'Enable color palette randomizing for various things',
     type: 'boolean',
   })
-  .option('antifreeze', { // Removes screen freze on level-up, relic acquire, and vessel acquire - eldri7ch
+  .option('magicmax', {
+    alias: 'x',
+    describe: 'Enable replace Heart Max with Magic Max Vessels',
+    type: 'boolean',
+  })
+  .option('antifreeze', {
     alias: 'z',
-    describe: 'Enable Anti-Freeze Mode, removing screen freeze from level-up.',
+    describe: 'Enable Anti-Freeze Mode, removes screen freezes from level-up & more.',
     type: 'boolean',
   })
   .option('disable-accessibility-patches', {
@@ -645,13 +651,13 @@ let seed
 let baseUrl
 let expectChecksum
 let haveChecksum
-// Require at least one argument. - 3snow_p7im
+// Require at least one argument.
 if (process.argv.length < 3) {
   yargs.showHelp()
   console.error('\nAt least 1 argument or option required')
   process.exit(1)
 }
-// Check for help. - 3snow_p7im
+// Check for help.
 if ('help' in argv) {
   if (!argv.help) {
     yargs.showHelp()
@@ -689,7 +695,7 @@ if ('help' in argv) {
 if (argv.compat) {
   version = argv.compat
 }
-// Check for seed string. - 3snow_p7im
+// Check for seed string.
 if ('seed' in argv) {
   if ('noSeed' in argv) {
     yargs.showHelp()
@@ -698,15 +704,15 @@ if ('seed' in argv) {
   }
   seed = argv.seed.toString()
 }
-// Check for base url. - 3snow_p7im
+// Check for base url.
 if (argv.url) {
   baseUrl = argv.url
 }
-// If seed generation is disabled, assume url output. - 3snow_p7im
+// If seed generation is disabled, assume url output.
 if (argv.noSeed) {
   argv.url = ''
 }
-// Check for expected checksum. - 3snow_p7im
+// Check for expected checksum.
 if ('expectChecksum' in argv) {
   if (!('seed' in argv) && !argv._[0]) {
     yargs.showHelp()
@@ -721,7 +727,7 @@ if ('expectChecksum' in argv) {
   expectChecksum = parseInt(argv.expectChecksum, 16)
   haveChecksum = true
 }
-// Check for randomization string. - 3snow_p7im
+// Check for randomization string.
 if ('options' in argv) {
   try {
     options = util.optionsFromString(argv.options)
@@ -731,7 +737,7 @@ if ('options' in argv) {
     process.exit(1)
   }
 }
-// Check for preset. - 3snow_p7im
+// Check for preset.
 if ('preset' in argv) {
   try {
     if (options && 'preset' in options && options.preset !== argv.preset) {
@@ -748,7 +754,7 @@ if ('preset' in argv) {
     process.exit(1)
   }
 }
-// Check for preset file. - 3snow_p7im
+// Check for preset file.
 if ('presetFile' in argv) {
   if (options && 'preset' in options) {
     yargs.showHelp()
@@ -764,7 +770,7 @@ if ('presetFile' in argv) {
   )
 }
 // If a preset and an options string are specified, determine if the options
-// are just duplicate options of the preset. - 3snow_p7im
+// are just duplicate options of the preset.
 if (options && 'preset' in options
     && Object.getOwnPropertyNames(options).length > 1) {
   try {
@@ -773,10 +779,10 @@ if (options && 'preset' in options
     if (util.optionsToString(preset.options())
         === util.optionsToString(applied)) {
       // Options string has duplicative values, so just make the options
-      // specifying the preset name. - 3snow_p7im
+      // specifying the preset name.
       options = {preset: preset.id}
     } else {
-      // Options string overrides the preset, so use the applied options. - 3snow_p7im
+      // Options string overrides the preset, so use the applied options.
       options = applied
     }
   } catch (err) {
@@ -785,7 +791,7 @@ if (options && 'preset' in options
     process.exit(1)
   }
 }
-// Assume safe if negations are specified without a preset. - 3snow_p7im
+// Assume safe if negations are specified without a preset.
 if (options) {
   const copy = Object.assign({}, options)
   Object.getOwnPropertyNames(copy).forEach(function(opt) {
@@ -798,7 +804,7 @@ if (options) {
   }
 }
 
-// Check for seed url. - 3snow_p7im
+// Check for seed url.
 if (argv._[0]) {
   if ('noSeed' in argv) {
     yargs.showHelp()
@@ -830,13 +836,13 @@ if (argv._[0]) {
     console.error('\nUrl does not contain seed')
     process.exit(1)
   }
-  // Ensure seeds match if given using --seed. - 3snow_p7im
+  // Ensure seeds match if given using --seed.
   if ('seed' in argv && argv.seed.toString() !== seed) {
     yargs.showHelp()
     console.error('\nArgument seed is not url seed')
     process.exit(1)
   }
-  // Ensure randomizations match if given using --options. - 3snow_p7im
+  // Ensure randomizations match if given using --options.
   const optionStr = util.optionsToString(options)
   if (('options' in argv && argv.options !== optionStr)
       || ('preset' in argv && 'p:' + argv.preset !== optionStr)) {
@@ -844,35 +850,35 @@ if (argv._[0]) {
     console.error('\nArgument randomizations are not url randomizations')
     process.exit(1)
   }
-  // Ensure checksum match if given using --expect-checksum. - 3snow_p7im
+  // Ensure checksum match if given using --expect-checksum.
   if ('expectChecksum' in argv && url.checksum != expectChecksum) {
     yargs.showHelp()
     console.error('\nArgument checksum is not url checksum')
     process.exit(1)
   }
 }
-// Set options for --race. - 3snow_p7im
+// Set options for --race.
 if (argv.race) {
   argv.url = ''
   if (argv.verbose === undefined) {
     argv.verbose = 2
   }
 }
-// Suppress output if quiet argument specified. - 3snow_p7im
+// Suppress output if quiet argument specified.
 if (argv.quiet) {
   argv.verbose = 0
 }
-// Create default options if none provided. - 3snow_p7im
+// Create default options if none provided.
 if (typeof(seed) === 'undefined' && !argv.noSeed) {
   seed = (new Date()).getTime().toString()
 }
 if (!options) {
   options = util.optionsFromString(constants.defaultOptions)
 }
-// Check for complexity setting. - 3snow_p7im
+// Check for complexity setting.
 if ('complexity' in argv) {
   let applied = Object.assign({}, options)
-  // Check for preset. - 3snow_p7im
+  // Check for preset.
   if ('preset' in applied) {
     applied = util.Preset.options(applied)
   } else if (!('relicLocations' in options)) {
@@ -880,7 +886,7 @@ if ('complexity' in argv) {
   }
   if (typeof applied.relicLocations !== 'object') {
     if (applied.relicLocations) {
-      // Inherit safe relic locations. - 3snow_p7im
+      // Inherit safe relic locations.
       const logic = util.presetFromName('safe').options().relicLocations
       applied.relicLocations = logic
     } else {
@@ -890,7 +896,7 @@ if ('complexity' in argv) {
       process.exit(1)
     }
   }
-  // Get seed goals. - 3snow_p7im
+  // Get seed goals.
   let complexity = Object.getOwnPropertyNames(applied.relicLocations).filter(
     function(key) {
       return /^[0-9]+$/.test(key)
@@ -910,18 +916,21 @@ if ('complexity' in argv) {
     process.exit(1)
   }
 }
-// Enable tournament mode if specified. - 3snow_p7im
+// Enable tournament mode if specified.
 if (argv.tournament) {
   options.tournamentMode = true
 }
+// Enable color rando mode if specified. - MottZilla
+if (argv.colorrando) { // Enable Color Randomizations
+  options.colorrandoMode = true
+}
 // Enable magic max mode if specified. - MottZilla
-if ('magicmax' in argv) { // Adds MP Vessel to replace Heart Vessel - eldrich
+if (argv.magicmax) { // Adds MP Vessel to replace Heart Vessel - eldrich
   options.magicmaxMode = true
 }
 // Enable anti-freeze mode if specified. - eldri7ch
-if ('antifreeze' in argv) { // Removes screen freezes from level-up and acquisitions - eldrich
+if (argv.antifreeze) { // Removes screen freezes from level-up and acquisitions - eldrich
   options.antiFreezeMode = true
-  console.log('antifreeze found')
 }
 // Set misc options.
 if ('verbose' in argv) {
@@ -1025,12 +1034,6 @@ if ('inBin' in argv) {
         )
         check.apply(result.data)
         // Randomize items.
-        rng = new require('seedrandom')(util.saltSeed(
-          version,
-          options,
-          seed,
-          2,
-        ))
         result = await util.randomizeItems(
           version,
           applied,

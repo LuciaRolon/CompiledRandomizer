@@ -1381,7 +1381,7 @@
         return !tile.noOffset
       })[0]
       const replacement = (addon || []).concat(pool).filter(function(item) {
-        return item.tiles && item.tiles.some(function(tile) { // Added correction to fix failed Bone Scimitar lookups
+        return item.tiles && item.tiles.some(function(tile) {
           if (tile === undefined) {
             if (name === 'Short sword') {
               addresses = [ 0x0b6b3c ]
@@ -1541,12 +1541,12 @@
     randomizeJosephsCloak(data, rng)
     // Twilight Cloak.
     capeColor(data, 0x0afa44, 0x0afbac, {rng: rng})
-    // DOP10 Cloak.
+    // DOP10 Cloak. - MottZilla
     capeColor(data, 0x627984c, 0x6279850, {rng: rng})
-    // DOP40 Cloak.
+    // DOP40 Cloak. - MottZilla
     capeColor(data, 0x6894054, 0x6894058, {rng: rng})
   }
-  
+
   function randomizeHydroStormColor(data, rng){
     const color1 = Math.floor(rng() * 0x100)
     const color2 = Math.floor(rng() * 0x100)
@@ -1578,7 +1578,7 @@
       data.writeChar(targetAddress, selectionByte)
     }
   }
-
+  
   function randomizeItems(rng, items, newNames, options) {
     const data = new util.checked()
     const info = util.newInfo()
@@ -1699,6 +1699,9 @@
         // Turkey mode.
         if (options.turkeyMode) {
           turkeyMode(items, pool)
+        }
+        // Color Palette Rando mode.
+        if (options.colorrandoMode) {
           randomizeCapeColors(data, rng)
           randomizeGravBootColors(data,rng)
           randomizeHydroStormColor(data, rng)

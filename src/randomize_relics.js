@@ -547,6 +547,14 @@
   }
 
   function patchRelicsMenu(data) {
+    // New patch by MottZilla to add JP Familiars back to the relic menu.
+    data.writeChar(0x10E568, 0x40)
+    data.writeChar(0x116088, 0x1E)
+    data.writeChar(0x1160A8, 0x00)
+    data.writeChar(0xAEF4A, 0xC3)
+    data.writeChar(0xAEF5A, 0xAC)
+    
+    /* Old Relics Menu Patch by Wild Mouse. Makes JP Familiars take the place of normal Faerie and Demon.
     // If relic locations are extended, the relic pool is padded out with the
     // familiars disabled in the NTSC-U release. To make them usable, they will
     // override their remaining counterparts in the menu if they have been
@@ -742,6 +750,7 @@
     offset = data.writeWord(offset, 0x26100003) // addiu s0, s0, 0x0003
     offset = data.writeWord(offset, 0x0803f27f) // j 0x800fc9fc
     offset = data.writeWord(offset, 0x00000000) // nop
+    */
   }
 
   function patchPixieSong(data) {
@@ -1249,7 +1258,7 @@
     let locations = getLocations()
     const extensions = []
     switch (options.relicLocations.extension) {
-      case constants.EXTENSION.WANDERER: // This is a smaller distribution than Equipment but includes all tourist checks + Spread + some Equipment - eldri7ch
+    case constants.EXTENSION.WANDERER: // This is a smaller distribution than Equipment but includes all tourist checks + Spread + some Equipment - eldri7ch
       extensions.push(constants.EXTENSION.WANDERER)
       extensions.push(constants.EXTENSION.SPREAD)
       extensions.push(constants.EXTENSION.GUARDED) 
@@ -1391,7 +1400,6 @@
 
   function writeRelics(rng, options, result, newNames) {
     const data = new util.checked()
-
     if (options.relicLocations) {
       let placedItems = options.itemLocations
       if (typeof(placedItems) !== 'object') {

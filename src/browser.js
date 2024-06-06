@@ -350,8 +350,16 @@
     localStorage.setItem('tournamentMode', elems.tournamentMode.checked)
   }
 
+  function colorrandoModeChange() {
+    localStorage.setItem('colorrandoMode', elems.colorrandoMode.checked)
+  }
+  
   function magicmaxModeChange() {
     localStorage.setItem('magicmaxMode', elems.magicmaxMode.checked)
+  }
+
+  function antiFreezeModeChange() {
+    localStorage.setItem('antiFreezeMode', elems.antiFreezeMode.checked)
   }
 
   function accessibilityPatchesChange() {
@@ -490,8 +498,14 @@
       if (elems.tournamentMode.checked) {
         options.tournamentMode = true
       }
+      if (elems.colorrandoMode.checked) {
+        options.colorrandoMode = true
+      }
       if (elems.magicmaxMode.checked) {
         options.magicmaxMode = true
+      }
+      if (elems.antiFreezeMode.checked) {
+        options.antiFreezeMode = true
       }
       return options
     }
@@ -505,7 +519,9 @@
       music: elems.music.checked,
       turkeyMode: elems.turkeyMode.checked,
       tournamentMode: elems.tournamentMode.checked,
+      colorrandoMode: elems.colorrandoMode.checked,
       magicmaxMode: elems.magicmaxMode.checked,
+      antiFreezeMode: elems.antiFreezeMode.checked,
     }
     if (elems.enemyDropsArg.value) {
       options.enemyDrops = util.optionsFromString(
@@ -652,6 +668,10 @@
         // Apply magic max patches.
         if (options.magicmaxMode) {
           check.apply(util.applyMagicMaxPatches())
+        }
+        // Apply anti-freeze patches.
+        if (options.antiFreezeMode) {
+          check.apply(util.applyAntiFreezePatches())
         }
         // Apply writes.
         check.apply(util.applyWrites(rng, applied))
@@ -874,7 +894,9 @@
     theme: document.getElementById('theme'),
     appendSeed: document.getElementById('append-seed'),
     tournamentMode: document.getElementById('tournament-mode'),
+    colorrandoMode: document.getElementById('colorrando-mode'),
     magicmaxMode: document.getElementById('magicmax-mode'),
+    antiFreezeMode: document.getElementById('antifreeze-mode'),
     accessibilityPatches: document.getElementById('accessibility-patches'),
     showSpoilers: document.getElementById('show-spoilers'),
     showRelics: document.getElementById('show-relics'),
@@ -926,7 +948,9 @@
   elems.theme.addEventListener('change', themeChange)
   elems.appendSeed.addEventListener('change', appendSeedChange)
   elems.tournamentMode.addEventListener('change', tournamentModeChange)
+  elems.colorrandoMode.addEventListener('change', colorrandoModeChange)
   elems.magicmaxMode.addEventListener('change', magicmaxModeChange)
+  elems.antiFreezeMode.addEventListener('change', antiFreezeModeChange)
   elems.accessibilityPatches.addEventListener('change', accessibilityPatchesChange)
   elems.showSpoilers.addEventListener('change', spoilersChange)
   elems.showRelics.addEventListener('change', showRelicsChange)
@@ -945,9 +969,12 @@
   const url = new URL(window.location.href)
   const releaseBaseUrl = constants.optionsUrls[constants.defaultOptions]
   const releaseHostname = new URL(releaseBaseUrl).hostname
-  const isDev = url.hostname !== releaseHostname
-  const fakeVersion = '0.0.0-dev'
-
+//  const isDev = url.hostname !== releaseHostname
+//  const fakeVersion = '0.0.0-dev'
+  // Added for index.html browser usage. This removes the development warning and sets the version number.
+  // version number will need to be kept up to date in the future along with the ones in index.html and package jsons.
+  const isDev = false
+  const fakeVersion = '3.16.0'
   if (url.protocol !== 'file:') {
     fetch('package.json', {cache: 'no-store'}).then(function(response) {
       if (response.ok) {
@@ -1080,6 +1107,12 @@
       relicLocationsArg = util.optionsToString(relicOptions)
     }
     elems.relicLocationsArg.value = relicLocationsArg
+    elems.relicLocationsExtension.wanderer.checked =
+      applied.relicLocations
+      && applied.relicLocations.extension === constants.EXTENSION.WANDERER
+    elems.relicLocationsExtension.tourist.checked =
+      applied.relicLocations
+      && applied.relicLocations.extension === constants.EXTENSION.TOURIST
     elems.relicLocationsExtension.guarded.checked =
       applied.relicLocations
       && applied.relicLocations.extension === constants.EXTENSION.GUARDED
@@ -1142,6 +1175,12 @@
       case constants.EXTENSION.EQUIPMENT:
         elems.relicLocationsExtension.equipment.checked = true
         break
+      case constants.EXTENSION.WANDERER:
+        elems.relicLocationsExtension.wanderer.checked = true
+        break
+      case constants.EXTENSION.TOURIST:
+        elems.relicLocationsExtension.tourist.checked = true
+        break
       default:
         elems.relicLocationsExtension.classic.checked = true
         break
@@ -1201,7 +1240,9 @@
   loadOption('showSolutions', showSolutionsChange, false)
   loadOption('showRelics', showRelicsChange, false)
   loadOption('tournamentMode', tournamentModeChange, false)
+  loadOption('colorrandoMode', colorrandoModeChange, false)
   loadOption('magicmaxMode', magicmaxModeChange, false)
+  loadOption('antiFreezeMode', antiFreezeModeChange, false)
   loadOption('accessibilityPatches', accessibilityPatchesChange, true)
   loadOption('showSpoilers', spoilersChange, true)
   setTimeout(function() {

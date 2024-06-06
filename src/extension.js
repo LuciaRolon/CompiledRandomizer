@@ -9,7 +9,6 @@
   const ZONE = constants.ZONE
   const EXTENSION = constants.EXTENSION
   const LOCATION = constants.LOCATION
-  const tileIdOffset = constants.tileIdOffset
 
   function util() {
     let util
@@ -215,7 +214,7 @@
     data.writeShort(0x4f88e6b, index)
     data.writeShort(0x4f8a135, index)
   }
-
+  
   const locations = [{
     name: LOCATION.CRYSTAL_CLOAK,
     extension: EXTENSION.GUARDED,

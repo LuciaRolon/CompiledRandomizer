@@ -193,7 +193,7 @@
     }
     let id = ((tile.candle || 0x00) << 8) | item.id
     if (tile.shop) {
-      // Apply offset for some item types in the shop menu. - 3snow_p7im
+      // Apply offset for some item types in the shop menu.
       switch (item.type) {
       case constants.TYPE.HELMET:
       case constants.TYPE.ARMOR:
@@ -205,7 +205,7 @@
     } else if (tile.candle && item.id >= constants.tileIdOffset) {
       id += constants.tileIdOffset
     } else {
-      // Apply tile offset for some tile items. - 3snow_p7im
+      // Apply tile offset for some tile items.
       switch (item.type) {
       case constants.TYPE.POWERUP:
       case constants.TYPE.HEART:
@@ -227,10 +227,10 @@
       const id = item.id
       const zone = constants.zones[relic.entity.zones[0]]
       const slots = itemSlots(item)
-      // Patch item table. - 3snow_p7im
+      // Patch item table.
       offset = romOffset(zone, zone.items + 0x02 * index)
       data.writeShort(offset, id + constants.tileIdOffset)
-      // Patch entities table. - 3snow_p7im
+      // Patch entities table.
       relic.entity.entities.forEach(function(addr) {
         if ('asItem' in relic) {
           if ('x' in relic.asItem) {
@@ -247,62 +247,62 @@
         offset = romOffset(zone, addr + 0x08)
         data.writeShort(offset, index)
       })
-      // Patch instructions that load a relic. - 3snow_p7im
+      // Patch instructions that load a relic.
       data.writeWord(
         relic.erase.instructions[0].addresses[0],
         relic.erase.instructions[0].instruction,
       )
-      // Patch boss reward. - 3snow_p7im
+      // Patch boss reward.
       data.writeShort(
         romOffset(boss, boss.rewards),
         id + constants.tileIdOffset,
       )
-      // Entry point. - 3snow_p7im
+      // Entry point.
       offset = romOffset(zone, opts.entry)
-      //                                          // j inj - 3snow_p7im
+      //                                          // j inj
       offset = data.writeWord(offset, 0x08060000 + (opts.inj >> 2))
-      offset = data.writeWord(offset, 0x00041400) // sll v0, a0, 10 - 3snow_p7im
-      // Zero tile function if item is equipped. - 3snow_p7im
+      offset = data.writeWord(offset, 0x00041400) // sll v0, a0, 10
+      // Zero tile function if item is equipped.
       offset = romOffset(zone, opts.inj)
-      //                                          // ori t1, r0, id - 3snow_p7im
+      //                                          // ori t1, r0, id
       offset = data.writeWord(
         offset,
         0x34090000 + id + constants.equipIdOffset
       )
       slots.forEach(function(slot, index) {
-        //                                          // lui t0, 0x8009 - 3snow_p7im
+        //                                          // lui t0, 0x8009
         offset = data.writeWord(offset, 0x3c080000 + (slot >>> 16))
-        //                                          // lbu t0, slot (t0) - 3snow_p7im
+        //                                          // lbu t0, slot (t0)
         offset = data.writeWord(offset, 0x91080000 + (slot & 0xffff))
-        offset = data.writeWord(offset, 0x00000000) // nop - 3snow_p7im
+        offset = data.writeWord(offset, 0x00000000) // nop
         const next = 5 + 5 * (slots.length - index - 1)
-        //                                          // beq t0, t1, pc + next - 3snow_p7im
+        //                                          // beq t0, t1, pc + next
         offset = data.writeWord(offset, 0x11090000 + next)
-        offset = data.writeWord(offset, 0x00000000) // nop - 3snow_p7im
+        offset = data.writeWord(offset, 0x00000000) // nop
       })
-      // Inventory check. - 3snow_p7im
-      offset = data.writeWord(offset, 0x3c088009) // lui t0, 0x8009 - 3snow_p7im
-      //                                          // lbu t0, 0x798a + id (v0) - 3snow_p7im
+      // Inventory check.
+      offset = data.writeWord(offset, 0x3c088009) // lui t0, 0x8009
+      //                                          // lbu t0, 0x798a + id (v0)
       offset = data.writeWord(
         offset,
         0x91080000 + id + constants.equipmentInvIdOffset,
       )
-      offset = data.writeWord(offset, 0x00000000) // nop - 3snow_p7im
-      offset = data.writeWord(offset, 0x11000004) // beq t0, r0, pc + 0x14 - 3snow_p7im
-      offset = data.writeWord(offset, 0x3409000f) // ori t1, r0, 0x000f - 3snow_p7im
-      offset = data.writeWord(offset, 0x3c088018) // lui t0, 0x8018 - 3snow_p7im
+      offset = data.writeWord(offset, 0x00000000) // nop
+      offset = data.writeWord(offset, 0x11000004) // beq t0, r0, pc + 0x14
+      offset = data.writeWord(offset, 0x3409000f) // ori t1, r0, 0x000f
+      offset = data.writeWord(offset, 0x3c088018) // lui t0, 0x8018
       relic.entity.entities.forEach(function(addr) {
-        //                                        // sh t1, entity + 4 (t0) - 3snow_p7im
+        //                                        // sh t1, entity + 4 (t0)
         offset = data.writeWord(offset, 0xa5090000 + addr + 0x04)
       })
-      // Return. - 3snow_p7im
-      offset = data.writeWord(offset, 0x03e00008) // jr ra - 3snow_p7im
-      offset = data.writeWord(offset, 0x00000000) // nop - 3snow_p7im
+      // Return.
+      offset = data.writeWord(offset, 0x03e00008) // jr ra
+      offset = data.writeWord(offset, 0x00000000) // nop
     }
   }
 
   function getRooms(zone) {
-    // Get room count. - 3snow_p7im
+    // Get room count.
     const rooms = roomCount(zone)
     const layouts = zone.readUInt32LE(0x20) - 0x80180000
     const room = zone.readUInt32LE(0x10) - 0x80180000
@@ -311,7 +311,7 @@
       const gfxId = zone[room + 0x8 * i + 0x5]
       if (gfxId == 0xff) {
         // Parsing the tiles layout data doesn't work for loading zone like
-        // the other rooms, so they must be skipped. - 3snow_p7im
+        // the other rooms, so they must be skipped.
         ids.push(undefined)
         continue
       }
@@ -319,9 +319,9 @@
     }
     return ids.map(function(id) {
       if (id !== undefined) {
-        // Get pointer to layout data. - 3snow_p7im
+        // Get pointer to layout data.
         const offset = zone.readUInt32LE(layouts + 0x8 * id) - 0x80180000
-        // Parse the layout data. - 3snow_p7im
+        // Parse the layout data.
         const tiles  = zone.readUInt32LE(offset) - 0x80180000
         const defs   = zone.readUInt32LE(offset + 0x4) - 0x80180000
         const dims   = zone.readUInt32LE(offset + 0x8) & 0xffffff
@@ -372,21 +372,21 @@
   }
 
   function entityData(zone) {
-    // Get rooms. - 3snow_p7im
+    // Get rooms.
     const rooms = getRooms(zone)
-    // Get entity layout IDs. - 3snow_p7im
+    // Get entity layout IDs.
     const room = zone.readUInt32LE(0x10) - 0x80180000
     const ids = []
     for (let i = 0; i < rooms.length; i++) {
       ids.push(zone[room + 0x4 + 0x8 * i + 0x3])
     }
-    // Get pointers to sorted tile layout structures. - 3snow_p7im
+    // Get pointers to sorted tile layout structures.
     const enter = zone.readUInt32LE(0x0c) - 0x80180000
     const offsets = [
       zone.readUInt16LE(enter + 0x1c),
       zone.readUInt16LE(enter + 0x28),
     ]
-    // Get sorted lists. - 3snow_p7im
+    // Get sorted lists.
     const entities = Array(rooms.length).fill(null).map(function() {
       return {}
     })
@@ -461,7 +461,7 @@
 
   function checkAddressRange(address) {
     if (address < 0xffff || address > 0xffffffff || Number.isNaN(address)) {
-      throw Error('bad address: ' + numToHex(address) + ' pure address: ' + address)
+      throw Error('bad address: ' + numToHex(address))
     }
   }
 
@@ -479,7 +479,11 @@
       len: 1,
       val: val & 0xff,
     }
-    return address + 1
+    address = address + 1					// Step adddress. 
+    if (Math.floor(address % 2352) > 2071) {			// Then check if new address is beyond User Data section.
+      address = ( Math.floor(address / 2352) * 2352) + 2376	// If beyond user data section then return the beginning of the next sector's user data section. - MottZilla
+    }
+    return address
   }
 
   checked.prototype.writeShort = function writeShort(address, val) {
@@ -505,7 +509,11 @@
       len: 2,
       val: val & 0xffff,
     }
-    return address + 2
+    address = address + 2					// Step adddress. 
+    if (Math.floor(address % 2352) > 2071) {			// Then check if new address is beyond User Data section.
+      address = ( Math.floor(address / 2352) * 2352) + 2376	// If beyond user data section then return the beginning of the next sector's user data section. - MottZilla
+    }
+    return address
   }
 
   checked.prototype.writeWord = function writeShort(address, val) {
@@ -533,7 +541,11 @@
       len: 4,
       val: val & 0xffffffff,
     }
-    return address + 4
+    address = address + 4					// Step adddress. 
+    if (Math.floor(address % 2352) > 2071) {			// Then check if new address is beyond User Data section.
+      address = ( Math.floor(address / 2352) * 2352) + 2376	// If beyond user data section then return the beginning of the next sector's user data section. - MottZilla
+    }
+    return address
   }
 
   checked.prototype.writeLong = function writeLong(address, val) {
@@ -565,7 +577,11 @@
       len: 8,
       val: val,
     }
-    return address + 8
+    address = address + 8					// Step adddress. 
+    if (Math.floor(address % 2352) > 2071) {			// Then check if new address is beyond User Data section.
+      address = ( Math.floor(address / 2352) * 2352) + 2376	// If beyond user data section then return the beginning of the next sector's user data section. - MottZilla
+    }
+    return address
   }
 
   checked.prototype.writeString = function writeString(address, val) {
@@ -616,7 +632,7 @@
 
   checked.prototype.toPatch = function toPatch(seed, preset, tournament) {
     const writes = this.writes
-    let size = 60 // Header - 3snow_p7im
+    let size = 60 // Header
     const addresses = Object.getOwnPropertyNames(writes)
     addresses.forEach(function(address) {
       size += 9 + writes[address].len
@@ -696,7 +712,7 @@
       }
       switch (c) {
       case 'p': {
-        // Check for an argument. - 3snow_p7im
+        // Check for an argument.
         if (negate) {
           throw new Error('Cannot negate preset option')
         }
@@ -705,7 +721,7 @@
         }
         let arg
         let start
-        // Parse the arg name. - 3snow_p7im
+        // Parse the arg name.
         start = ++i
         while (i < randomize.length && randomize[i] !== ',') {
           i++
@@ -726,14 +742,14 @@
           break
         }
         let enemyDrops = options.enemyDrops || true
-        // Check for an argument. - 3snow_p7im
+        // Check for an argument.
         if (randomize[i] === ':') {
           i++
           let args = 0
           while (i < randomize.length && randomize[i] !== ',') {
             let arg
             let start
-            // Parse the arg name. - 3snow_p7im
+            // Parse the arg name.
             start = i
             while (i < randomize.length
                    && [',', ':'].indexOf(randomize[i]) === -1) {
@@ -844,7 +860,7 @@
             throw new Error('Expected arguments')
           }
         } else if (typeof(enemyDrops) === 'undefined') {
-          // Otherwise it's just turning on drop randomization. - 3snow_p7im
+          // Otherwise it's just turning on drop randomization.
           enemyDrops = true
         }
         if (typeof(enemyDrops) === 'object'
@@ -860,14 +876,14 @@
           break
         }
         let startingEquipment = options.startingEquipment || true
-        // Check for an argument. - 3snow_p7im
+        // Check for an argument.
         if (randomize[i] === ':') {
           i++
           let args = 0
           while (i < randomize.length && randomize[i] !== ',') {
             let arg
             let start
-            // Parse the arg name. - 3snow_p7im
+            // Parse the arg name.
             start = i
             while (i < randomize.length
                    && [',', ':'].indexOf(randomize[i]) === -1) {
@@ -992,7 +1008,7 @@
             throw new Error('Expected argument')
           }
         } else if (typeof(startingEquipment) === 'undefined') {
-          // Otherwise it's just turning on equipment randomization. - 3snow_p7im
+          // Otherwise it's just turning on equipment randomization.
           startingEquipment = true
         }
         if (typeof(startingEquipment) === 'object'
@@ -1008,14 +1024,14 @@
           break
         }
         let itemLocations = options.itemLocations || true
-        // Check for an argument. - 3snow_p7im
+        // Check for an argument.
         if (randomize[i] === ':') {
           i++
           let args = 0
           while (i < randomize.length && randomize[i] !== ',') {
             let arg
             let start
-            // Parse the arg name. - 3snow_p7im
+            // Parse the arg name.
             start = i
             while (i < randomize.length
                    && [',', ':'].indexOf(randomize[i]) === -1) {
@@ -1129,7 +1145,7 @@
             throw new Error('Expected argument')
           }
         } else if (typeof(itemLocations) === 'undefined') {
-          // Otherwise it's just turning on item randomization. - 3snow_p7im
+          // Otherwise it's just turning on item randomization.
           itemLocations = true
         }
         if (typeof(itemLocations) === 'object'
@@ -1145,14 +1161,14 @@
           break
         }
         let prologueRewards = options.prologueRewards || true
-        // Check for an argument - 3snow_p7im
+        // Check for an argument
         if (randomize[i] === ':') {
           i++
           let args = 0
           while (i < randomize.length && randomize[i] !== ',') {
             let arg
             let start
-            // Parse the arg name. - 3snow_p7im
+            // Parse the arg name.
             start = i
             while (i < randomize.length
                    && [',', ':'].indexOf(randomize[i]) === -1) {
@@ -1211,7 +1227,7 @@
             throw new Error('Expected argument')
           }
         } else if (typeof(prologueRewards) === 'undefined') {
-          // Otherwise it's just turning on reward randomization. - 3snow_p7im
+          // Otherwise it's just turning on reward randomization.
           prologueRewards = true
         }
         if (typeof(prologueRewards) === 'object'
@@ -1227,17 +1243,17 @@
           break
         }
         let relicLocations = options.relicLocations || true
-        // Check for an argument. - 3snow_p7im
+        // Check for an argument.
         if (randomize[i] === ':') {
           i++
           let args = 0
           while (i < randomize.length && randomize[i] !== ',') {
             // If there's an argument it's either a location lock, a location
-            // extension, or a complexity target. - 3snow_p7im
+            // extension, or a complexity target.
             const relicNames = Object.getOwnPropertyNames(constants.RELIC)
             let arg
             let start
-            // Parse the arg name. - 3snow_p7im
+            // Parse the arg name.
             start = i
             while (i < randomize.length
                    && [',', ':'].indexOf(randomize[i]) === -1) {
@@ -1421,7 +1437,7 @@
             throw new Error('Expected argument')
           }
         } else if (typeof(relicLocations) === 'undefined') {
-          // Otherwise it's just turning on relic randomization. - 3snow_p7im
+          // Otherwise it's just turning on relic randomization.
           relicLocations = true
         }
         if (typeof(relicLocations) === 'object'
@@ -1469,7 +1485,7 @@
           let address
           let value
           let start
-          // Parse the address. - 3snow_p7im
+          // Parse the address.
           start = i
           while (i < randomize.length
                  && [',', ':'].indexOf(randomize[i]) === -1) {
@@ -1521,7 +1537,6 @@
               case 'r99': length = 1
               case 'rs': length = 2
               case 'rw': length = 4
-              case 'rr': length = 4
               case 'rl': length = 8
               default:
                 throw new Error('Invalid value: ' + value)
@@ -1638,20 +1653,20 @@
     })
     const safe = presetFromName('safe')
     // Handle the edge case where there is a preset, but the remaining
-    // options are the same as the preset options. - 3snow_p7im
+    // options are the same as the preset options.
     if ('preset' in options
         && Object.getOwnPropertyNames(options).length > 1) {
       // If relicLocations is strictly true, replace it with the safe preset
-      // location locks. - 3snow_p7im
+      // location locks.
       const copy = Object.assign({}, options)
       delete copy.preset
       if (copy.relicLocations === true) {
         copy.relicLocations = clone(safe.options().relicLocations)
       }
-      // Now compare the remaining options to the preset options. - 3snow_p7im
+      // Now compare the remaining options to the preset options.
       const preset = presetFromName(options.preset)
       if (optionsToString(copy) === optionsToString(preset.options())) {
-        // If they match, the options become the preset by itself. - 3snow_p7im
+        // If they match, the options become the preset by itself.
         options = {preset: preset.id}
       }
     }
@@ -1662,7 +1677,12 @@
           randomize.push('t')
         }
         delete options.tournamentMode
-      } else if ('magicmaxMode' in options) { // Adds MP Vessel to replace Heart Vessel - eldrich
+      } else if ('colorrandoMode' in options) { 
+        if (options.colorrandoMode) {
+          randomize.push('l')
+        }
+        delete options.colorrandoMode
+      } else if ('magicmaxMode' in options) { 
         if (options.magicmaxMode) {
           randomize.push('x')
         }
@@ -1987,7 +2007,7 @@
             locations.filter(function(location) {
               const extensions = []
               switch (options.relicLocations.extension) {
-                case constants.EXTENSION.WANDERER: // This is a smaller distribution than Equipment but includes all tourist checks + Spread + some Equipment - eldri7ch
+              case constants.EXTENSION.WANDERER: // This is a smaller distribution than Equipment but includes all tourist checks + Spread + some Equipment - eldri7ch
                   extensions.push(constants.EXTENSION.WANDERER)
                   extensions.push(constants.EXTENSION.SPREAD)
                   extensions.push(constants.EXTENSION.GUARDED) 
@@ -1996,7 +2016,7 @@
                 extensions.push(constants.EXTENSION.TOURIST)
               case constants.EXTENSION.EQUIPMENT:
                 extensions.push(constants.EXTENSION.EQUIPMENT)
-	            case constants.EXTENSION.SPREAD:
+	      case constants.EXTENSION.SPREAD:
                 extensions.push(constants.EXTENSION.SPREAD)
               case constants.EXTENSION.GUARDED:
                 extensions.push(constants.EXTENSION.GUARDED)
@@ -2093,38 +2113,38 @@
             switch (write.type) {
             case 'char':
               if (write.value === 'random') {
-                opt += 'rc'// random character from CLI - eldri7ch
+                opt += 'rc'
               } else if (write.value === 'random1') {
-                opt += 'r1'// random between 0-1 from CLI - eldri7ch
+                opt += 'r1'
               } else if (write.value === 'random3') {
-                opt += 'r3'// random between 0-3 from CLI - eldri7ch
+                opt += 'r3'
               } else if (write.value === 'random10') {
-                opt += 'r10'// random between 1-10 from CLI - eldri7ch
+                opt += 'r10'
               } else if (write.value === 'random99') {
-                opt += 'r99'// random between 1-99 from CLI - eldri7ch
+                opt += 'r99'
               } else {
                 opt += numToHex(write.value, 2)
               }
               break
             case 'short':
               if (write.value === 'random') {
-                opt += 'rs'// random short from CLI - eldri7ch
+                opt += 'rs'
               } else {
                 opt += numToHex(write.value, 4)
               }
               break
             case 'word':
               if (write.value === 'random') {
-                opt += 'rw'// random word from CLI - eldri7ch
+                opt += 'rw'
               } else if (write.value === 'randomRelic') {
-                opt += 'rr'// random relic from CLI - eldri7ch
+                opt += 'rr'
               } else {
                 opt += numToHex(write.value, 8)
               }
               break
             case 'long':
               if (write.value === 'random') {
-                opt += 'rl'// random long from CLI - eldri7ch
+                opt += 'rl'
               } else {
                 opt += numToHex(write.value, 16)
               }
@@ -2151,7 +2171,7 @@
       }
       return str + opt
     }, '')
-    // Handle the edge case where the options are the same as a preset. - 3snow_p7im
+    // Handle the edge case where the options are the same as a preset.
     if (!disableRecurse) {
       const preset = presets().filter(function(preset) {
         if (preset instanceof Preset) {
@@ -2883,6 +2903,7 @@
     stats,
     music,
     turkeyMode,
+    colorrandoMode,
     magicmaxMode,
     antiFreezeMode,
     writes,
@@ -2902,6 +2923,7 @@
     this.stats = stats
     this.music = music
     this.turkeyMode = turkeyMode
+    this.colorrandoMode = colorrandoMode
     this.magicmaxMode = magicmaxMode
     this.antiFreezeMode = antiFreezeMode
     if (writes) {
@@ -2989,50 +3011,49 @@
     return clone(options)
   }
 
-  // Helper class to create relic location locks. - 3snow_p7im
+  // Helper class to create relic location locks.
   function PresetBuilder(metadata) {
     this.metadata = metadata
-    // Aliases. - 3snow_p7im
+    // Aliases.
     this.zoneAliases = {}
     this.enemyAliases = {}
     this.relicAliases = {}
     this.locationAliases = {}
     this.itemAliases = {}
-    // The collection of enemy drops. - 3snow_p7im
+    // The collection of enemy drops.
     this.drops = true
-    // The collection of starting equipment. - 3snow_p7im
+    // The collection of starting equipment.
     this.equipment = true
-    // The collection of item locations. - 3snow_p7im
+    // The collection of item locations.
     this.items = true
-    // The collection of prologue rewards. - 3snow_p7im
+    // The collection of prologue rewards.
     this.rewards = true
-    // The collection of location locks. - 3snow_p7im
+    // The collection of location locks.
     this.locations = true
-    // The collection of escape requirements. - 3snow_p7im
+    // The collection of escape requirements.
     this.escapes = {}
-    // The relic locations extension. - 3snow_p7im
+    // The relic locations extension.
     this.extension = constants.EXTENSION.GUARDED
-    // Leak prevention. - 3snow_p7im
-    // Leak prevention is the removal of items from an area to prevent players 
-    // from discovering that the randomized progression in a certain area is an 
-    // item or a relic based on the count of all items in that area, per Wild Mouse. - eldri7ch
+    // Leak prevention.
     this.leakPrevention = true
-    // Thrust sword ability. - 3snow_p7im
+    // Thrust sword ability.
     this.thrustSword = false
-    // The complexity goal. - 3snow_p7im
+    // The complexity goal.
     this.target = undefined
     this.goal = undefined
-    // Item stats randomization. - 3snow_p7im
+    // Item stats randomization.
     this.stats = true
-    // Music randomization. - 3snow_p7im
+    // Music randomization.
     this.music = true
-    // Turkey mode. - 3snow_p7im
+    // Turkey mode.
     this.turkey = true
-    // Magic Max addition. - eldri7ch
+    // Color Palette Rando mode.
+    this.colorrando = false
+    // Magic Max mode.
     this.magicmax = false
-    // Screen freeze removal. - eldri7ch
+    // AntiFreeze mode.
     this.antifreeze = false
-    // Arbitrary writes. - 3snow_p7im
+    // Arbitrary writes.
     this.writes = undefined
   }
 
@@ -3310,6 +3331,9 @@
     if ('turkeyMode' in json) {
       builder.turkeyMode(json.turkeyMode)
     }
+    if ('colorrandoMode' in json) {
+      builder.colorrandoMode(json.colorrandoMode)
+    }
     if ('magicmaxMode' in json) {
       builder.magicmaxMode(json.magicmaxMode)
     }
@@ -3576,7 +3600,7 @@
               self.target.max = parseInt(parts[1])
             }
           } else {
-            // Break the lock into access locks and escape requirements. - 3snow_p7im
+            // Break the lock into access locks and escape requirements.
             const locks = self.locations[location] || []
             const escape = self.escapes[location] || []
             preset.relicLocations[location].forEach(function(lock) {
@@ -3602,6 +3626,9 @@
     }
     if ('turkeyMode' in preset) {
       this.turkey = preset.turkeyMode
+    }
+    if ('colorrandoMode' in preset) {
+      this.colorrando = preset.colorrandoMode
     }
     if ('magicmaxMode' in preset) {
       this.magicmax = preset.magicmaxMode
@@ -3989,7 +4016,7 @@
       }
     }
 
-  // Block an item from a tile. - 3snow_p7im
+  // Block an item from a tile.
   PresetBuilder.prototype.blockItem =
     function blockItem(zoneId, itemName, number, replaceNames) {
       if (typeof(number) !== 'number') {
@@ -4081,7 +4108,7 @@
       }
     }
 
-  // Block an item from being a reward. - 3snow_p7im
+  // Block an item from being a reward.
   PresetBuilder.prototype.blockReward =
     function blockReward(itemName, blocked) {
       assert.equal(typeof(itemName), 'string')
@@ -4117,7 +4144,7 @@
       })
     }
 
-  // Lock relic location behind abilities. - 3snow_p7im
+  // Lock relic location behind abilities.
   PresetBuilder.prototype.lockLocation = function lockLocation(where, what) {
     if (typeof(this.locations) !== 'object') {
       this.locations = {}
@@ -4127,7 +4154,7 @@
     })
   }
 
-  // Block a relic from appearing at a location. - 3snow_p7im
+  // Block a relic from appearing at a location.
   PresetBuilder.prototype.blockRelic = function blockRelic(where, what) {
     assert.equal(typeof(where), 'string')
     if (Array.isArray(what)) {
@@ -4150,7 +4177,7 @@
   }
 
   // Ensure that a location grants abilities, or that access to that location
-  // is only granted by obtaining abilities. - 3snow_p7im
+  // is only granted by obtaining abilities.
   PresetBuilder.prototype.escapeRequires =
     function escapeRequires(where, what) {
       if (typeof(this.locations) !== 'object') {
@@ -4161,7 +4188,7 @@
       })
     }
 
-  // Place a relic at a location. - 3snow_p7im
+  // Place a relic at a location.
   PresetBuilder.prototype.placeRelic = function placeRelic(where, what) {
     assert.equal(typeof(where), 'string')
     if (Array.isArray(what)) {
@@ -4183,7 +4210,7 @@
     this.locations.placed[where] = what
   }
 
-  // Replace a relic with an item. - 3snow_p7im
+  // Replace a relic with an item.
   PresetBuilder.prototype.replaceRelic = function replaceRelic(relic, item) {
     assert.equal(typeof(relic), 'string')
     assert.equal(typeof(item), 'string')
@@ -4191,27 +4218,27 @@
     this.locations.replaced[relic] = getItemAlias.call(this, item)
   }
 
-  // Enable/disable relic location randomization. - 3snow_p7im
+  // Enable/disable relic location randomization.
   PresetBuilder.prototype.relicLocations = function relicLocations(enabled) {
     assert.equal(typeof(enabled), 'boolean')
     this.locations = enabled
   }
 
-  // Enable/disable progression item leak prevention. - 3snow_p7im
+  // Enable/disable progression item leak prevention.
   PresetBuilder.prototype.preventLeaks =
     function preventLeaks(enabled) {
       assert.equal(typeof(enabled), 'boolean')
       this.leakPrevention = enabled
     }
 
-  // Enable/disable thrust sword ability. - 3snow_p7im
+  // Enable/disable thrust sword ability.
   PresetBuilder.prototype.thrustSwordAbility =
     function thrustSwordAbility(enabled) {
       assert.equal(typeof(enabled), 'boolean')
       this.thrustSword = enabled
     }
 
-  // Set complexity target. - 3snow_p7im
+  // Set complexity target.
   PresetBuilder.prototype.complexityGoal =
     function goal(complexityMin, complexityMax, goal) {
       if (arguments.length === 1 && typeof(complexityMin) !== 'number') {
@@ -4247,41 +4274,44 @@
       }
     }
 
-  // Enable guarded relic locations. - 3snow_p7im
+  // Enable guarded relic locations.
   PresetBuilder.prototype.relicLocationsExtension =
     function relicLocationsExtension(extension) {
       assert.oneOf(typeof(extension), ['boolean', 'string'])
       this.extension = extension
     }
 
-  // Enable stat randomization. - 3snow_p7im
+  // Enable stat randomization.
   PresetBuilder.prototype.randomizeStats = function randomizeStats(enabled) {
     this.stats = enabled
   }
 
-  // Enable music randomization. - 3snow_p7im
+  // Enable music randomization.
   PresetBuilder.prototype.randomizeMusic = function randomizeMusic(enabled) {
     this.music = enabled
   }
 
-  // Enable turkey mode. - 3snow_p7im
+  // Enable turkey mode.
   PresetBuilder.prototype.turkeyMode = function turkeyMode(enabled) {
     this.turkey = enabled
   }
 
-  // Enable magic vessels. - eldri7ch
+  // Enable Color Palette Randomization
+  PresetBuilder.prototype.colorrandoMode = function colorrandoMode(enabled) {
+    this.colorrando = enabled
+  }
+
+  // Enable Magic Max replacing Heart Max
   PresetBuilder.prototype.magicmaxMode = function magicmaxMode(enabled) {
-    assert.equal(typeof(enabled), 'boolean')
     this.magicmax = enabled
   }
 
-  // remove screen freezes. - eldri7ch
+  // remove screen freezes from level up, relic, vessel. - eldri7ch & MottZilla
   PresetBuilder.prototype.antiFreezeMode = function antiFreezeMode(enabled) {
-    assert.equal(typeof(enabled), 'boolean')
     this.antifreeze = enabled
   }
 
-  // Write a character. - 3snow_p7im
+  // Write a character.
   PresetBuilder.prototype.writeChar = function writeChar(address, value) {
     if (value !== 'random' && value !== 'random1' && value !== 'random3' && value !== 'random10' && value !== 'random99') {
       value = parseInt(value)
@@ -4292,10 +4322,14 @@
       address: address,
       value: value,
     })
-    return address + 1
+    address = address + 1					// Step adddress. 
+    if (Math.floor(address % 2352) > 2071) {			// Then check if new address is beyond User Data section.
+      address = ( Math.floor(address / 2352) * 2352) + 2376	// If beyond user data section then return the beginning of the next sector's user data section. - MottZilla
+    }
+    return address
   }
 
-  // Write a short. - 3snow_p7im
+  // Write a short.
   PresetBuilder.prototype.writeShort = function writeShort(address, value) {
     if (value !== 'random') {
       value = parseInt(value)
@@ -4306,10 +4340,14 @@
       address: address,
       value: value,
     })
-    return address + 2
+    address = address + 2					// Step adddress. 
+    if (Math.floor(address % 2352) > 2071) {			// Then check if new address is beyond User Data section.
+      address = ( Math.floor(address / 2352) * 2352) + 2376	// If beyond user data section then return the beginning of the next sector's user data section. - MottZilla
+    }
+    return address
   }
 
-  // Write a word. - 3snow_p7im
+  // Write a word.
   PresetBuilder.prototype.writeWord = function writeWord(address, value) {
     if (value !== 'random' && value !== 'randomRelic') {
       value = parseInt(value)
@@ -4320,10 +4358,14 @@
       address: address,
       value: value,
     })
-    return address + 4
+    address = address + 4					// Step adddress. 
+    if (Math.floor(address % 2352) > 2071) {			// Then check if new address is beyond User Data section.
+      address = ( Math.floor(address / 2352) * 2352) + 2376	// If beyond user data section then return the beginning of the next sector's user data section. - MottZilla
+    }
+    return address
   }
 
-  // Write a long. - 3snow_p7im
+  // Write a long.
   PresetBuilder.prototype.writeLong = function writeLong(address, value) {
     this.writes = this.writes || []
     this.writes.push({
@@ -4331,10 +4373,14 @@
       address: address,
       value: value,
     })
-    return address + 8
+    address = address + 8					// Step adddress. 
+    if (Math.floor(address % 2352) > 2071) {			// Then check if new address is beyond User Data section.
+      address = ( Math.floor(address / 2352) * 2352) + 2376	// If beyond user data section then return the beginning of the next sector's user data section. - MottZilla
+    }
+    return address
   }
 
-  // Write a string. - 3snow_p7im
+  // Write a string.
   PresetBuilder.prototype.writeString = function writeString(address, value) {
     if (typeof(value) === 'string') {
       const hexBytes = value.split(/([a-fA-F0-9]{2})/g)
@@ -4354,7 +4400,7 @@
     return address + value.length
   }
 
-  // Create a preset from the current configuration. - 3snow_p7im
+  // Create a preset from the current configuration.
   PresetBuilder.prototype.build = function build() {
     const self = this
     let drops = self.drops
@@ -4561,6 +4607,7 @@
     const stats = self.stats
     const music = self.music
     const turkey = self.turkey
+    const colorrando = self.colorrando
     const magicmax = self.magicmax
     const antifreeze = self.antifreeze
     const writes = self.writes
@@ -4580,6 +4627,7 @@
       stats,
       music,
       turkey,
+      colorrando,
       magicmax,
       antifreeze,
       writes,
@@ -4602,18 +4650,17 @@
 
   function applyTournamentModePatches() {
     const data = new checked()
-    // Patch shop relic cost. - 3snow_p7im
+    // Patch shop relic cost.
     data.writeWord(0x047a3098, 0x00000000)
-    // Open clock statue. - 3snow_p7im
+    // Open clock statue.
     data.writeWord(0x04951d4c, 0x3c020002)
     data.writeWord(0x04fcf264, 0x3c020002)
     return data
   }
-
+	
   function applyMagicMaxPatches() { // Adds MP Vessel to replace Heart Vessel - eldrich
     const data = new checked()
-    let offset = 0x00117b50
-
+    let offset = 0x00117b50	// Set Starting Offset
     // Patch MP Vessels function Heart Vessels - code by MottZilla & graphics drawn by eldri7ch
     offset = data.writeWord(offset, 0x3c028004)
     offset = data.writeWord(offset, 0x8c42c9a0)
@@ -4644,9 +4691,7 @@
     offset = data.writeWord(offset, 0xaca40000)
     offset = data.writeWord(offset, 0x0803f8e7)
     offset = data.writeWord(offset, 0x34020000)
-
     // Patch GFX - MottZilla
-
     offset = 0x3868268
     offset = data.writeWord(offset, 0x40000000)
     offset = data.writeWord(offset, 0x3)
@@ -4773,8 +4818,6 @@
     offset = data.writeWord(offset, 0x67f)
     offset = data.writeWord(offset, 0xf7600000)
     offset = data.writeWord(offset, 0x67f)
-    
-  
     return data
   }
 
@@ -4798,7 +4841,6 @@
     const promises = Array(workers.length)
     const running = Array(workers.length).fill(true)
     let done
-    let instance = 0
     for (let i = 0; i < workers.length; i++) {
       const thread = i
       const worker = workers[i]
@@ -4819,7 +4861,6 @@
             newNames: newNames,
           })
         }
-        instance = instance + 1
         worker.postMessage(JSON.stringify(message))
       }
       promises[i] = new Promise(function(resolve, reject) {
@@ -4861,7 +4902,6 @@
       if (result.error) {
         throw result.error
       }
-      console.log('Relics randomized ' + instance + ' times')
       return result
     })
   }
@@ -4953,7 +4993,7 @@
             value = Math.floor(rng() * 0x100000000)
           }
           else if (value === 'randomRelic') {
-            // "2690808164" translates to the address before the relic hex is added - eldri7ch
+            // "2690808163" translates to the address before the relic hex is added - eldri7ch
             let relicHex
             relicHex = Math.floor(rng() * 29) + 2690808164
             value = numToHex(relicHex)

@@ -28,7 +28,7 @@
       require('./aperture'),
       require('./big-toss'),
       require('./bountyhunter'),
-      require('./bountyhunter-tc'),
+      require('./bountyhuntertc'),
       require('./hitman'),
       require('./chaos-lite'),
       require('./beyond'),
@@ -40,6 +40,8 @@
       require('./skinwalker'),
       require('./summoner'),
       require('./agonizetwtw'),
+      require('./stwosafe'),
+      require('./open'),
     ]
   }
   exports.sort(function(a, b) {

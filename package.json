@@ -40,7 +40,7 @@
     "aperture",
     "big-toss",
     "bountyhunter",
-    "bountyhunter-tc",
+    "bountyhuntertc",
     "hitman",
     "chaos-lite",
     "beyond",
@@ -51,7 +51,9 @@
     "lookingglass",
     "skinwalker",
     "summoner",
-    "agonizetwtw"
+    "agonizetwtw",
+    "stwosafe",
+    "open"
   ],
   "engines": {
     "node": ">=15"

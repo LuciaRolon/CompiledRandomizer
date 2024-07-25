@@ -220,5 +220,11 @@
     "id": "open",
     "description": "Opens several shortcuts and all teleporters.",
     "author": "TalicZealot, eldri7ch, Mottzilla, Wecoc"
+  },
+  {
+    "name": "Brawler",
+    "id": "brawler",
+    "description": "Intended as a challenge preset to get more accustom to the Fist type weapons, OnlyFists if you will.",
+    "author": "Crazy4blades, Mottzilla"
   }
 ]
